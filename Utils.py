@@ -43,7 +43,7 @@ def getDatasets(dataFolder, cancerType, available_samples):
 def getFeatureSet(cancerType, available_samples):
     # Read feature importance file
     featureSubsets = []
-    dataframe = pandas.read_csv("output/feature_importance/" + cancerType + "_feature_importance_averaged.csv", header=0, sep=",")
+    dataframe = pandas.read_csv("output/feature_importance/" + cancerType + "_feature_importance.csv", header=0, sep=",")
     dataframe = dataframe.loc[dataframe['z_score'] >= 0.5]
     featureSubsets.append(dataframe['feature'].values)
 
