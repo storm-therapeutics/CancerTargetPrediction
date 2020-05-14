@@ -1,15 +1,48 @@
 import pandas as pd
 import pandas
 import pickle
+import random
+random.seed(9999)
 
 def obtainOutputFileName(outputPath, cancerType):
-    return outputPath + cancerType.capitalize() + "/" + cancerType + "_model_selection_statistics.csv"
+    return outputPath + cancerType + "_model_selection_statistics.csv"
 
 def obtainPredictionsOutputFileName(outputPath, cancerType):
-    return outputPath + cancerType.capitalize() + "/" + cancerType + "_model_selection_predictions.csv"
+    return outputPath + cancerType + "_model_selection_predictions.csv"
 
 def obtainOutputModelFileName(outputPath, cancerType, modelName, sampleId):
-    return outputPath + cancerType.capitalize() + "/" + cancerType + "_" + modelName + "_s" + sampleId + ".pkl"
+    return outputPath + cancerType + "_" + modelName + "_s" + sampleId + ".pkl"
+
+def getDatasetsNE(dataFolder, cancerType, available_samples):
+    dataframes = []
+    featureSets = getFeatureSetNE(cancerType, available_samples)
+
+    for inx, sample in enumerate(available_samples):
+        dataframe = pandas.read_csv(dataFolder + cancerType.capitalize() + "/" + cancerType + "_training_data_" + sample + ".dat", header=0, sep=",")
+
+        dataframe = dataframe[dataframe['label'] != 2]
+        dataframe.drop("gene", axis=1, inplace=True)
+
+        dataframePositive = dataframe[dataframe['label'] == 1]
+        dataframeNegative = dataframe[dataframe['label'] == 0]
+
+        positiveSize = dataframePositive.shape[0]
+        negativeSize = dataframeNegative.shape[0]
+
+        # Set them the same size
+        if(positiveSize > negativeSize):
+            dataframePositive = dataframePositive.head(-(positiveSize-negativeSize))
+        elif(negativeSize > positiveSize):
+            dataframeNegative = dataframeNegative.head(-(negativeSize-positiveSize))
+
+        dataframe = pd.concat([dataframePositive, dataframeNegative])  
+        dataframeFeatureSet = list(featureSets[0])
+        dataframeFeatureSet.append("label")
+        dataframe = dataframe[dataframeFeatureSet]
+
+        dataframes.append(dataframe)
+    
+    return dataframes
 
 def getDatasets(dataFolder, cancerType, available_samples):
     dataframes = []
@@ -47,6 +80,16 @@ def getFeatureSet(cancerType, available_samples):
     featureSubsets = []
     dataframe = pandas.read_csv("output/feature_importance/" + cancerType + "_feature_importance.csv", header=0, sep=",")
     dataframe = dataframe.loc[dataframe['z_score'] >= 0.5]
+    featureSubsets.append(dataframe['feature'].values)
+
+    return featureSubsets
+
+def getFeatureSetNE(cancerType, available_samples):
+    # Read feature importance file
+    neFeatures = ["e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15", "e16", "e17", "e18", "e19", "e20", "e21", "e22", "e23", "e24", "e25", "e26", "e27", "e28", "e29", "e30", "e31"] 
+    featureSubsets = []
+    dataframe = pandas.read_csv("output/feature_importance/" + cancerType + "_feature_importance.csv", header=0, sep=",")
+    dataframe = dataframe.loc[dataframe['feature'].isin(neFeatures)]
     featureSubsets.append(dataframe['feature'].values)
 
     return featureSubsets
