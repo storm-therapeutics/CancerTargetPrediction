@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+output/models_performance/*.pkl
+output/models_performance/*.csv
+output/feature_importance/*.csv
