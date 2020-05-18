@@ -83,7 +83,7 @@ if __name__ == '__main__':
 
             data = data.reindex(columns=orderFeatures)
             # data is the dataframe
-            corr = data.corr(method="pearson")
+            corr = data.corr(method="spearman")
             if inx == 0:
                 cancerCorr = corr
             else:
