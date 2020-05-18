@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     available_samples = ["s1","s2","s3","s4","s5","s6","s7","s8","s9","s10"]
     cancer_type_list = ["liver","breast","bladder", "colon", "ovarian", "kidney", "leukemia","pancreatic","lung"]
-    orderFeatures = ["essentiality","mutation","expression", "e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15", "e16", "e17", "e18", "e19", "e20", "e21", "e22", "e23", "e24", "e25", "e26", "e27", "e28", "e29", "e30", "e31", "label"]
+    orderFeatures = ["essentiality","mutation","expression", "e0", "e1", "e2", "e3", "e4", "e5", "e6", "e7", "e8", "e9", "e10", "e11", "e12", "e13", "e14", "e15", "e16", "e17", "e18", "e19", "e20", "e21", "e22", "e23", "e24", "e25", "e26", "e27", "e28", "e29", "e30", "e31"]
 
     for cancer_type in cancer_type_list:
         cancerCorr = pd.DataFrame()
@@ -81,6 +81,7 @@ if __name__ == '__main__':
                 # Set feature type as categorical
                 data[f_] = data[f_].astype('category')
 
+            data = data.drop(columns=['label'])
             data = data.reindex(columns=orderFeatures)
             # data is the dataframe
             corr = data.corr(method="spearman")
